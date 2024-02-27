@@ -61,39 +61,41 @@ async def deployment_timer_handler(meta: Dict, spec: Dict, **kwargs):
     if not tbr:
         return
 
-    start_time = tbr['spec']['startTime']
-    end_time = tbr['spec']['endTime']
-    tbr_tz = tbr['spec']['timeZone']
+    working_hours = tbr['spec']['working_hours']
+    for working_hour in working_hours:
+        start_time = working_hour['startTime']
+        end_time = working_hour['endTime']
+        tbr_tz = working_hour['timeZone']
 
-    current_time_obj = datetime.now(timezone(tbr_tz)).time()
-    logger.info(f"Current time in {tbr_tz}: {current_time_obj}")
+        current_time_obj = datetime.now(timezone(tbr_tz)).time()
+        logger.info(f"Current time in {tbr_tz}: {current_time_obj}")
 
-    start_time_obj = datetime.strptime(start_time, '%H:%M').time()
-    end_time_obj = datetime.strptime(end_time, '%H:%M').time()
+        start_time_obj = datetime.strptime(start_time, '%H:%M').time()
+        end_time_obj = datetime.strptime(end_time, '%H:%M').time()
 
-    logger.debug(
-        f"TBR working hours: {start_time_obj}-{end_time_obj}")
+        logger.debug(
+            f"TBR working hours: {start_time_obj}-{end_time_obj}")
 
-    try:
-        if end_time_obj < start_time_obj:
-            logger.error(f'endTime {end_time_obj} value cannot be earlier than startTime {start_time_obj}')
+        try:
+            if end_time_obj < start_time_obj:
+                logger.error(f'endTime {end_time_obj} value cannot be earlier than startTime {start_time_obj}')
+                return
+            
+            if end_time_obj == start_time_obj:
+                logger.error(f'endTime {end_time_obj} value cannot be equal to startTime {start_time_obj}')
+                return
+            
+            if current_time_obj < start_time_obj or current_time_obj > end_time_obj:
+                logger.info(
+                    f"Current time {current_time_obj} is outside the working hours {start_time_obj}-{end_time_obj}")
+                go_to_sleep(obj_type, meta, current_replicas, logger)
+            else:
+                logger.info(
+                    f"Current time {current_time_obj} is within the working hours {start_time_obj}-{end_time_obj}")
+                wake_up(obj_type, meta, current_replicas, logger)
+        except Exception as e:
+            logger.error(f"Failed to process TBR: {e}")
             return
-        
-        if end_time_obj == start_time_obj:
-            logger.error(f'endTime {end_time_obj} value cannot be equal to startTime {start_time_obj}')
-            return
-        
-        if current_time_obj < start_time_obj or current_time_obj > end_time_obj:
-            logger.info(
-                f"Current time {current_time_obj} is outside the working hours {start_time_obj}-{end_time_obj}")
-            go_to_sleep(obj_type, meta, current_replicas, logger)
-        else:
-            logger.info(
-                f"Current time {current_time_obj} is within the working hours {start_time_obj}-{end_time_obj}")
-            wake_up(obj_type, meta, current_replicas, logger)
-    except Exception as e:
-        logger.error(f"Failed to process TBR: {e}")
-        return
 
     return
 
@@ -115,39 +117,41 @@ async def statefulset_timer_handler(meta: Dict, spec: Dict, **kwargs):
     if not tbr:
         return
 
-    start_time = tbr['spec']['startTime']
-    end_time = tbr['spec']['endTime']
-    tbr_tz = tbr['spec']['timeZone']
+    working_hours = tbr['spec']['working_hours']
+    for working_hour in working_hours:    
+        start_time = working_hour['startTime']
+        end_time = working_hour['endTime']
+        tbr_tz = working_hour['timeZone']
 
-    current_time_obj = datetime.now(timezone(tbr_tz)).time()
-    logger.info(f"Current time in {tbr_tz}: {current_time_obj}")
+        current_time_obj = datetime.now(timezone(tbr_tz)).time()
+        logger.info(f"Current time in {tbr_tz}: {current_time_obj}")
 
-    start_time_obj = datetime.strptime(start_time, '%H:%M').time()
-    end_time_obj = datetime.strptime(end_time, '%H:%M').time()
+        start_time_obj = datetime.strptime(start_time, '%H:%M').time()
+        end_time_obj = datetime.strptime(end_time, '%H:%M').time()
 
-    logger.debug(
-        f"TBR working hours: {start_time_obj}-{end_time_obj}")
+        logger.debug(
+            f"TBR working hours: {start_time_obj}-{end_time_obj}")
 
-    try:
-        if end_time_obj < start_time_obj:
-            logger.error(f'endTime {end_time_obj} value cannot be earlier than startTime {start_time_obj}')
+        try:
+            if end_time_obj < start_time_obj:
+                logger.error(f'endTime {end_time_obj} value cannot be earlier than startTime {start_time_obj}')
+                return
+            
+            if end_time_obj == start_time_obj:
+                logger.error(f'endTime {end_time_obj} value cannot be equal to startTime {start_time_obj}')
+                return
+            
+            if current_time_obj < start_time_obj or current_time_obj > end_time_obj:
+                logger.info(
+                    f"Current time {current_time_obj} is outside the working hours {start_time_obj}-{end_time_obj}")
+                go_to_sleep(obj_type, meta, current_replicas, logger)
+            else:
+                logger.info(
+                    f"Current time {current_time_obj} is within the working hours {start_time_obj}-{end_time_obj}")
+                wake_up(obj_type, meta, current_replicas, logger)
+        except Exception as e:
+            logger.error(f"Failed to process TBR: {e}")
             return
-        
-        if end_time_obj == start_time_obj:
-            logger.error(f'endTime {end_time_obj} value cannot be equal to startTime {start_time_obj}')
-            return
-        
-        if current_time_obj < start_time_obj or current_time_obj > end_time_obj:
-            logger.info(
-                f"Current time {current_time_obj} is outside the working hours {start_time_obj}-{end_time_obj}")
-            go_to_sleep(obj_type, meta, current_replicas, logger)
-        else:
-            logger.info(
-                f"Current time {current_time_obj} is within the working hours {start_time_obj}-{end_time_obj}")
-            wake_up(obj_type, meta, current_replicas, logger)
-    except Exception as e:
-        logger.error(f"Failed to process TBR: {e}")
-        return
 
     return
 
