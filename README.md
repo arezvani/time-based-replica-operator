@@ -76,7 +76,7 @@ To use the TBR Operator, follow these steps:
        tbr.abriment.dev/policy: my-tbr-policy
    ```
 
-3. The TBR Operator will automatically monitor the deployments and statefulsets with the TBR policy annotation. During the specified working hours, the operator will scale up the replicas to the desired count. Outside of the working hours, the operator will scale down the replicas to 0.
+3. The TBR Operator will automatically monitor the deployments and statefulsets with the TBR policy annotation. During the specified working hours, the operator will scale up the replicas to the previous replica count before scale down that path as annotation in resource. Outside of the working hours, the operator will scale down the replicas to 0.
 
 ## Cleanup
 
