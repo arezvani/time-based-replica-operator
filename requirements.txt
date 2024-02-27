@@ -1,0 +1,5 @@
+kopf
+asyncio
+kubernetes
+pytz
+typing_extensions

@@ -1,0 +1,4 @@
+PYTHON_VERSION=3.11
+PYTHON_BASE_IMAGE=python
+DOCKERFILE_PATH=.
+OS_PACKAGES=python3-dev,build-essential,gpg,curl,apt-transport-https

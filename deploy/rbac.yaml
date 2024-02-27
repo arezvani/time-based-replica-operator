@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: tbr-operator
+  name: tbr-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tbr-operator
+rules:
+
+  # Framework: knowing which other operators are running (i.e. peering).
+  - apiGroups: [kopf.dev]
+    resources: [clusterkopfpeerings]
+    verbs: [list, watch, patch, get]
+
+  - apiGroups: [zalando.org]
+    resources: [clusterkopfpeerings]
+    verbs: [list, watch, patch, get]    
+
+  # Framework: runtime observation of namespaces & CRDs (addition/deletion).
+  - apiGroups: [apiextensions.k8s.io]
+    resources: [customresourcedefinitions]
+    verbs: [list, watch, get]
+
+  - apiGroups: [""]
+    resources: [namespaces]
+    verbs: [list, watch]
+
+  # Framework: admission webhook configuration management.
+  - apiGroups: [admissionregistration.k8s.io/v1, admissionregistration.k8s.io/v1beta1]
+    resources: [validatingwebhookconfigurations, mutatingwebhookconfigurations]
+    verbs: [create, patch]
+
+  # Application: read-only access for watching cluster-wide.
+  - apiGroups: [abriment.dev]
+    resources: [tbrs]
+    verbs: [list, watch, patch, get]
+
+  # Framework: posting the events about the handlers progress/errors.
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [create]
+
+  - apiGroups: ["apps"]
+    resources: ["deployments","statefulset"]
+    verbs: ["patch", "watch", "list", "get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tbr-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tbr-operator
+subjects:
+  - kind: ServiceAccount
+    name: tbr-operator
+    namespace: tbr-operator

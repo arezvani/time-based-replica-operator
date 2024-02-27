@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tbr-operator
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      application: tbr-operator
+  template:
+    metadata:
+      labels:
+        application: tbr-operator
+    spec:
+      serviceAccountName: tbr-operator
+      containers:
+      - name: tbr
+        image: nexus.abriment.local:7072/abriment/operator/tbr:v1
+        env:
+        - name: CHECK_INTERVAL
+          value: "60"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080

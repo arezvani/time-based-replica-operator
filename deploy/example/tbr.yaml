@@ -1,0 +1,9 @@
+apiVersion: abriment.dev/v1
+kind: TBR
+metadata:
+  name: my-work-hours
+
+spec:
+  startTime: "09:00"
+  endTime: "17:00"
+  timeZone: Asia/Tehran
