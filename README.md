@@ -65,8 +65,7 @@ To use the TBR Operator, follow these steps:
    spec:
      startTime: "08:00"      # Start time in HH:MM format
      endTime: "18:00"        # End time in HH:MM format
-     timeZone: "America/New_York"  # Timezone in TZ database name format
-     replicas: 3             # Desired number of replicas during working hours
+     timeZone: "Asia/Tehran"  # Timezone in TZ database name format
    ```
 
 2. Apply the TBR policy to a deployment or statefulset by adding the following annotation to the metadata of the resource:
